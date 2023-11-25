@@ -1,0 +1,25 @@
+SET SERVEROUTPUT ON;
+
+DECLARE
+  CURSOR blood_count IS
+    SELECT blood_type, COUNT(*) AS total_units
+    FROM blood_donation
+    WHERE expiration_date > CURRENT_DATE
+    GROUP BY blood_type;
+
+  TYPE BloodTypeRec IS RECORD (
+    blood_type blood_donation.blood_type%TYPE,
+    total_units NUMBER
+  );
+
+  blood_type_rec BloodTypeRec;
+BEGIN
+  OPEN blood_count;
+  LOOP
+    FETCH blood_count INTO blood_type_rec;
+    EXIT WHEN blood_count%NOTFOUND;
+    DBMS_OUTPUT.PUT_LINE('Blood Type: ' || blood_type_rec.blood_type || ' - Units Remaining: ' || blood_type_rec.total_units);
+  END LOOP;
+  CLOSE blood_count;
+END;
+/

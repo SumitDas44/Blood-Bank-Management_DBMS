@@ -1,0 +1,58 @@
+SET LINESIZE 300
+SET PAGESIZE 200
+
+drop table patient;
+drop table blood_donation;
+drop table blood_bank;
+drop table donor;
+drop table doctor;
+
+create table doctor(
+doctor_id number(10) not null,
+doctor_name varchar(30),
+contact_number number(15),
+specialization varchar(30),
+primary key(doctor_id)
+);
+
+create table donor(
+donor_id number(10) not null,
+donor_name varchar(30),
+donor_address varchar(50),
+gender varchar(10),
+age number(5),
+weight varchar(10),
+blood_type varchar(10),
+blood_pressure varchar(10),
+contact_number number(15),
+doctor_id number(10),
+primary key(donor_id),
+foreign key(doctor_id) references doctor
+);
+
+create table blood_bank(
+blood_bank_id number(10) not null,
+blood_bank_name varchar(30),
+bank_address varchar(30),
+primary key(blood_bank_id)
+);
+
+create table blood_donation(
+blood_type varchar(10),
+expiration_date DATE,
+donor_id number(10),
+blood_bank_id number(10),
+primary key(donor_id),
+foreign key(donor_id) references donor,
+foreign key(blood_bank_id) references blood_bank
+);
+
+create table patient(
+patient_id number(10) not null,
+patient_name varchar(30),
+age number(10),
+required_blood_type varchar(10),
+hospital_address varchar(50),
+contact_number number(15),
+primary key(patient_id)
+);

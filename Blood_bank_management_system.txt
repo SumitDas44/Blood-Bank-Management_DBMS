@@ -1,0 +1,123 @@
+SET LINESIZE 300
+SET PAGESIZE 200
+
+drop table patient;
+drop table blood_donation;
+drop table blood_bank;
+drop table donor;
+drop table doctor;
+
+create table doctor(
+doctor_id number(10) not null,
+doctor_name varchar(30),
+contact_number number(15),
+specialization varchar(30),
+primary key(doctor_id)
+);
+
+INSERT INTO doctor (doctor_id,doctor_name,contact_number,specialization) values(1,'Dr Sumit',01711111111,'Cardiology');
+INSERT INTO doctor (doctor_id,doctor_name,contact_number,specialization) values(2,'Dr Amit',01722222222,'Neurology');
+INSERT INTO doctor (doctor_id,doctor_name,contact_number,specialization) values(3,'Dr Phil',01733333333,'Pathology');
+INSERT INTO doctor (doctor_id,doctor_name,contact_number,specialization) values(4,'Dr Mike',01744444444,'Dermatology');
+
+create table donor(
+donor_id number(10) not null,
+donor_name varchar(30),
+donor_address varchar(50),
+gender varchar(10),
+age number(5),
+weight varchar(10),
+blood_type varchar(10),
+blood_pressure varchar(10),
+contact_number number(15),
+doctor_id number(10),
+primary key(donor_id),
+foreign key(doctor_id) references doctor
+);
+
+INSERT INTO donor (donor_id,donor_name,donor_address,gender,age,weight,blood_type,blood_pressure,contact_number,doctor_id) values(1,'Rakib','Mirpur, Dhaka','Male',24,'150 lbs','A+','120/80mmHg',01500000001,1);
+INSERT INTO donor (donor_id,donor_name,donor_address,gender,age,weight,blood_type,blood_pressure,contact_number,doctor_id) values(2,'Priom','Gopibagh, Dhaka','Male',24,'188 lbs','B+','130/90mmHg',01500000002,2);
+INSERT INTO donor (donor_id,donor_name,donor_address,gender,age,weight,blood_type,blood_pressure,contact_number,doctor_id) values(3,'Robins','Patiya, Chittagong','Male',24,'121 lbs','O+','115/75mmHg',01500000047,2);
+INSERT INTO donor (donor_id,donor_name,donor_address,gender,age,weight,blood_type,blood_pressure,contact_number,doctor_id) values(4,'Nabil','Dhanmondi, Dhaka','Male',24,'154 lbs','O+','120/80mmHg',01500000032,2);
+INSERT INTO donor (donor_id,donor_name,donor_address,gender,age,weight,blood_type,blood_pressure,contact_number,doctor_id) values(5,'Hasan','Feni','Male',23,'118 lbs','B+','120/80mmHg',01500000054,3);
+INSERT INTO donor (donor_id,donor_name,donor_address,gender,age,weight,blood_type,blood_pressure,contact_number,doctor_id) values(6,'Ananna','Khulna','Female',23,'110 lbs','A+','120/80mmHg',01500000041,4);
+INSERT INTO donor (donor_id,donor_name,donor_address,gender,age,weight,blood_type,blood_pressure,contact_number,doctor_id) values(7,'Piya','Mogbazar, Dhaka','Female',23,'120 lbs','A+','125/80mmHg',01500000045,4);
+
+create table blood_bank(
+blood_bank_id number(10) not null,
+blood_bank_name varchar(30),
+bank_address varchar(30),
+primary key(blood_bank_id)
+);
+
+INSERT INTO blood_bank(blood_bank_id,blood_bank_name,bank_address) values(1,'KUET Medical','KUET,Khulna');
+INSERT INTO blood_bank(blood_bank_id,blood_bank_name,bank_address) values(2,'Khulna Medical','Khulna');
+INSERT INTO blood_bank(blood_bank_id,blood_bank_name,bank_address) values(3,'City Medical','KDA Avenue, Khulna');
+INSERT INTO blood_bank(blood_bank_id,blood_bank_name,bank_address) values(4,'Labaid','Majid Sarani, Khulna');
+
+create table blood_donation(
+blood_type varchar(10),
+expiration_date DATE,
+donor_id number(10),
+blood_bank_id number(10),
+primary key(donor_id),
+foreign key(donor_id) references donor,
+foreign key(blood_bank_id) references blood_bank
+);
+
+INSERT INTO blood_donation(blood_type,expiration_date,donor_id,blood_bank_id) values('A+',TO_DATE('06-11-2023', 'DD-MM-YYYY'),1,1);
+INSERT INTO blood_donation(blood_type,expiration_date,donor_id,blood_bank_id) values('B+',TO_DATE('06-11-2023', 'DD-MM-YYYY'),2,2);
+INSERT INTO blood_donation(blood_type,expiration_date,donor_id,blood_bank_id) values('O+',TO_DATE('07-11-2023', 'DD-MM-YYYY'),3,2);
+INSERT INTO blood_donation(blood_type,expiration_date,donor_id,blood_bank_id) values('O+',TO_DATE('06-11-2023', 'DD-MM-YYYY'),4,4);
+INSERT INTO blood_donation(blood_type,expiration_date,donor_id,blood_bank_id) values('B+',TO_DATE('06-11-2023', 'DD-MM-YYYY'),5,1);
+INSERT INTO blood_donation(blood_type,expiration_date,donor_id,blood_bank_id) values('A+',TO_DATE('06-11-2023', 'DD-MM-YYYY'),6,3);
+INSERT INTO blood_donation(blood_type,expiration_date,donor_id,blood_bank_id) values('A+',TO_DATE('07-11-2023', 'DD-MM-YYYY'),7,4);
+
+
+create table patient(
+patient_id number(10) not null,
+patient_name varchar(30),
+age number(10),
+required_blood_type varchar(10),
+hospital_address varchar(50),
+contact_number number(15),
+primary key(patient_id)
+);
+
+INSERT INTO patient(patient_id,patient_name,age,required_blood_type,hospital_address,contact_number) values(1,'naeem',24,'B+','Khulna Medical',01900000029);
+INSERT INTO patient(patient_id,patient_name,age,required_blood_type,hospital_address,contact_number) values(2,'alvi',24,'A+','KUET Medical',01900000013);
+INSERT INTO patient(patient_id,patient_name,age,required_blood_type,hospital_address,contact_number) values(3,'turna',23,'O+','KUET Medical',01900000009);
+INSERT INTO patient(patient_id,patient_name,age,required_blood_type,hospital_address,contact_number) values(4,'Shuva',24,'AB+','City Medical',01900000051);
+
+SELECT * FROM doctor;
+SELECT * FROM donor;
+SELECT * FROM blood_bank;
+SELECT * FROM blood_donation;
+SELECT * FROM patient;
+
+SET SERVEROUTPUT ON;
+
+DECLARE
+  CURSOR blood_count IS
+    SELECT blood_type, COUNT(*) AS total_units
+    FROM blood_donation
+    WHERE expiration_date > CURRENT_DATE
+    GROUP BY blood_type;
+
+  TYPE BloodTypeRec IS RECORD (
+    blood_type blood_donation.blood_type%TYPE,
+    total_units NUMBER
+  );
+
+  blood_type_rec BloodTypeRec;
+BEGIN
+  OPEN blood_count;
+  LOOP
+    FETCH blood_count INTO blood_type_rec;
+    EXIT WHEN blood_count%NOTFOUND;
+    DBMS_OUTPUT.PUT_LINE('Blood Type: ' || blood_type_rec.blood_type || ' - Units Remaining: ' || blood_type_rec.total_units);
+  END LOOP;
+  CLOSE blood_count;
+END;
+/
+
